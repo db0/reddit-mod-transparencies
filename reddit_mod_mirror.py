@@ -54,10 +54,11 @@ for in_out in IN_OUT:
 
         url = r'{}'.format(URL)
 
-        time.sleep(2)
+        time.sleep(10)
         r = client.get(url, headers=HEADERS)
 
         if valid_result(r.text):
                 pp2(r.text, open(WEBPATH,"w"))
+                print "Succesfully mirrored %s" % URL
         else:
                 print "Error fetching %s" % URL
