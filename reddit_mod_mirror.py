@@ -45,7 +45,7 @@ def login(username, password):
 client = login(USERNAME, PASSWORD)
 
 def valid_result(s):
-        match = re.search('<title>Too Many Requests</title>', s, re.I)
+        match = re.search('<title>Too Many Requests</title>|<title>Ow! -- reddit.com</title>', s, re.I)
         return not match
 
 for in_out in IN_OUT:
