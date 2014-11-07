@@ -1,11 +1,20 @@
+#!/usr/bin/env python
+
 import time,getpass
 import requests, json
+import string
+import re
 from pprint import pprint as pp2
 
-USERNAME = "anarchobot"
-WEBPATH = "/web/transparency.dbzer0.com/modlog/anarchism/index.html"
-PASSWORD = "[PASSWORD]"
-URL = "http://www.reddit.com/r/Anarchism/about/log/"
+LOGIN_FILE = 'login.txt'
+URLS_FILE = 'poll-urls.txt'
+
+def readlines(filename): return [line.strip() for line in open(filename)]
+
+(USERNAME, PASSWORD) = readlines(LOGIN_FILE)
+IN_OUT = map(string.split, readlines(URLS_FILE))
+
+HEADERS = {'user-agent': '/u/dbzer0\'s transparency python bot', }
 
 #----------------------------------------------------------------------
 def login(username, password):
@@ -14,11 +23,10 @@ def login(username, password):
     #print 'begin log in'
     #username and password
     UP = {'user': username, 'passwd': password, 'api_type': 'json',}
-    headers = {'user-agent': '/u/dbzer0\'s transparency python bot', }
 
     #POST with user/pwd
     client = requests.session()
-    r = client.post('http://www.reddit.com/api/login', data=UP)
+    r = client.post('http://www.reddit.com/api/login', data=UP, headers=HEADERS)
 
     #if you want to see what you've got so far
     #print r.text
@@ -33,14 +41,23 @@ def login(username, password):
 
     return client
 
+
 client = login(USERNAME, PASSWORD)
 
-#mod mail url
-url = r'{}'.format(URL)
-r = client.get(url)
+def valid_result(s):
+        match = re.search('<title>Too Many Requests</title>', s, re.I)
+        return not match
 
-#here's the HTML of the page
-#pp2(r.text)
+for in_out in IN_OUT:
+        URL = in_out[0]
+        WEBPATH = in_out[1]
 
-#Writing the result onto the file
-pp2(r.text, open(WEBPATH,"w"))
+        url = r'{}'.format(URL)
+
+        time.sleep(2)
+        r = client.get(url, headers=HEADERS)
+
+        if valid_result(r.text):
+                pp2(r.text, open(WEBPATH,"w"))
+        else:
+                print "Error fetching %s" % URL
