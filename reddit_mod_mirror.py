@@ -4,7 +4,6 @@ import time,getpass
 import requests, json
 import string
 import re
-from pprint import pprint as pp2
 
 LOGIN_FILE = 'login.txt'
 URLS_FILE = 'poll-urls.txt'
@@ -58,7 +57,8 @@ for in_out in IN_OUT:
         r = client.get(url, headers=HEADERS)
 
         if valid_result(r.text):
-                pp2(r.text, open(WEBPATH,"w"))
+                with (open(WEBPATH,"w")) as out:
+                        out.write(r.text)
                 print "Succesfully mirrored %s" % URL
         else:
                 print "Error fetching %s" % URL
