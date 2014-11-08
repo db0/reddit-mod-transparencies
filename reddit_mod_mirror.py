@@ -58,7 +58,7 @@ for in_out in IN_OUT:
 
         if valid_result(r.text):
                 with (open(WEBPATH,"w")) as out:
-                        out.write(r.text)
+                        out.write(r.text.encode('utf8'))
                 print "Succesfully mirrored %s" % URL
         else:
                 print "Error fetching %s" % URL
